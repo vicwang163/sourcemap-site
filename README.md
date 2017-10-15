@@ -1,33 +1,12 @@
-# {{name}}
+# sourcemap-site
 
-{{description}}
+> debug online error using sourcemap-site
 
-## QuickStart
+# start
+npm start
 
-<!-- add docs here for user -->
+# run on the dev
+npm run dev
 
-see [egg docs][egg] for more detail.
-
-### Development
-```shell
-$ npm install
-$ npm run dev
-$ open http://localhost:7001/news
-```
-
-### Deploy
-
-Use `EGG_SERVER_ENV=prod` to enable prod mode
-
-```shell
-$ EGG_SERVER_ENV=prod npm start
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+# reload page
+npm run web_build
