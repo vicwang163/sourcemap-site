@@ -13,7 +13,7 @@ module.exports = app => {
       // add map url
       sourcemapStack.getMapPath(stacks, params)
       // transform real path
-      stacks = yield sourcemapStack.getRealStack(stacks)
+      stacks = yield sourcemapStack.getRealStack(stacks, params)
       this.ctx.body = stacks
     }
   }

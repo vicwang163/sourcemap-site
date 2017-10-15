@@ -11,16 +11,19 @@
     </el-collapse>
   </div>
   <div v-else>
-    <el-alert v-if="errorTitle" :title="errorTitle" type="error"></el-alert>
+    <el-alert v-if="errorTitle" :title="errorTitle" type="error" @close="closeError"></el-alert>
     <el-form ref="form" class="form" :model="form" label-width="80px" action="/showstack" method="post">
       <el-form-item label="map 地址">
         <el-input v-model="form.mapUrl" name="mapUrl"></el-input>
       </el-form-item>
       <el-form-item label="map文件名">
-        <el-input v-model="form.mapName" name="mapName"></el-input>
+        <el-input v-model="form.mapName"></el-input>
+      </el-form-item>
+      <el-form-item label="map加密密钥">
+        <el-input v-model="form.mapEncrypt" ></el-input>
       </el-form-item>
       <el-form-item label="错误信息">
-        <el-input type="textarea" v-model="form.desc" name="desc" :rows="5"></el-input>
+        <el-input type="textarea" v-model="form.desc" name="desc" :rows="10"></el-input>
       </el-form-item>
       <el-form-item>
         <el-input type="hidden" name="_csrf" v-model="form._csrf" />
@@ -38,17 +41,22 @@ import fetch from 'isomorphic-fetch'
 export default {
   name: 'error-info',
   data () {
+    let sourcemapConfig
+    try {
+      sourcemapConfig = JSON.parse(localStorage.sourcemapConfig)
+    } catch (e) {
+      sourcemapConfig = {
+        mapUrl: '',
+        mapEncrypt: '',
+        mapName: '[name].js.map'
+      }
+    }
     return {
       form: {
-        mapUrl: '',
-        mapName: '[name].js.map',
-        desc: `
-        "TypeError: console.logs is not a function
-        at n (http://localhost:8082/app.js:6:180422)
-        at a.clickme (http://localhost:8082/app.js:6:180791)
-        at Proxy.r (http://localhost:8082/app.js:6:1053)
-        at click (http://localhost:8082/app.js:6:172962)
-        at HTMLHeadingElement.t (http://localhost:8082/app.js:6:7539)"`,
+        mapUrl: sourcemapConfig.mapUrl,
+        mapEncrypt: sourcemapConfig.mapEncrypt,
+        mapName: sourcemapConfig.mapName,
+        desc: '',
         _csrf: Cookie.get('csrfToken')
       },
       errorTitle: '',
@@ -66,6 +74,7 @@ export default {
         data.push(index + '=' + this.form[index])
       }
       data = data.join('&')
+      // fetch result
       fetch('/showstack', {
         method: 'POST',
         credentials: 'include',
@@ -86,6 +95,13 @@ export default {
       }).catch(() => {
         console.error(arguments)
       })
+      // store config
+      let storeData = {
+        mapUrl: this.form.mapUrl,
+        mapEncrypt: this.form.mapEncrypt,
+        mapName: this.form.mapName
+      }
+      localStorage.sourcemapConfig = JSON.stringify(storeData)
     },
     goBack () {
       this.realStack = null
@@ -99,6 +115,9 @@ export default {
           }, 500)
         }
       }
+    },
+    closeError () {
+      this.errorTitle = null
     }
   }
 }
